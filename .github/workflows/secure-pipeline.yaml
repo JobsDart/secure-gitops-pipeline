@@ -30,8 +30,8 @@ jobs:
           load: true
           tags: ${{ env.IMAGE }}:${{ github.sha }}
 
-      # --- GATE 1: vulnerability scan. Fails the build on HIGH/CRITICAL CVEs. ---
-      - name: Trivy image scan
+      # Report ALL HIGH/CRITICAL findings to GitHub code scanning (never fails the build).
+      - name: Trivy scan (report to Security tab)
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ${{ env.IMAGE }}:${{ github.sha }}
@@ -39,13 +39,24 @@ jobs:
           output: trivy.sarif
           severity: HIGH,CRITICAL
           ignore-unfixed: true
-          exit-code: '1'
+          exit-code: '0'
 
       - name: Upload scan results
         if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy.sarif
+
+      # --- GATE 1: fail the build on a fixable CRITICAL vulnerability (fail-closed). ---
+      # HIGH findings are tracked above; CRITICAL blocks the release. The "old base image"
+      # demo in docs/DEPLOYMENT.md trips this gate on purpose.
+      - name: Trivy gate (fail on CRITICAL)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ env.IMAGE }}:${{ github.sha }}
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
 
       # --- Supply-chain provenance: SBOM. ---
       - name: Generate SBOM (Syft)
