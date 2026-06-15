@@ -12,7 +12,7 @@ permissions:
   security-events: write   # upload Trivy SARIF to code scanning
 
 env:
-  IMAGE: ghcr.io/${{ github.repository }}
+  IMAGE: ghcr.io/jobsdart/secure-gitops-pipeline
 
 jobs:
   build-scan-sign:
@@ -32,7 +32,7 @@ jobs:
 
       # --- GATE 1: vulnerability scan. Fails the build on HIGH/CRITICAL CVEs. ---
       - name: Trivy image scan
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ${{ env.IMAGE }}:${{ github.sha }}
           format: sarif
