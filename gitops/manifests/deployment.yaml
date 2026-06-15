@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secure-app
+  labels: { app: secure-app }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: secure-app }
+  template:
+    metadata:
+      labels: { app: secure-app }
+    spec:
+      containers:
+        - name: app
+          # Tag is updated by the pipeline; only Cosign-signed images are admitted
+          # (see ../../policy/kyverno-verify-images.yaml).
+          image: ghcr.io/jobsdart/secure-gitops-pipeline:latest
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet: { path: /, port: 80 }
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          resources:
+            requests: { cpu: "50m", memory: "64Mi" }
+            limits: { cpu: "200m", memory: "128Mi" }
