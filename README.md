@@ -12,6 +12,7 @@
   <img alt="ArgoCD" src="https://img.shields.io/badge/GitOps-ArgoCD-EF7B4D">
   <img alt="k6" src="https://img.shields.io/badge/Load-k6-7D64FF">
   <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green">
+  <a href="https://github.com/JobsDart/secure-gitops-pipeline/actions"><img alt="Pipeline" src="https://github.com/JobsDart/secure-gitops-pipeline/actions/workflows/secure-pipeline.yaml/badge.svg"></a>
 </p>
 
 ---
